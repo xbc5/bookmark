@@ -4,6 +4,15 @@
 - After installation, the script must be executable from any directory.
 - The script should be runnable by typing `bookmark` in the terminal.
 
+## ABSOLUTE IMPERATIVES
+
+**NEVER MODIFY ANY DIRECTORY OUTSIDE OF THE CURRENT PROJECT DIRECTORY AND ITS CHILDREN.**
+
+- All work must be confined strictly to the current working directory and its subdirectories.
+- Never access, read, write, or modify files in parent directories or system directories.
+- For testing functionality that requires real files, create test fixtures within the test directory structure.
+- Test fixtures must contain all necessary test data and files within the project boundaries.
+
 ## Code Style
 
 - Write clean, readable code that follows best practices.
@@ -32,6 +41,8 @@
 - Write code that is straightforward to test.
 - Use **pytest** for all testing.
 - Prefer testing with real files using pytest's fixtures over mocks when possible.
+- Create all test fixtures using Pytest, including creating directories and files.
+- Never create test files or fixtures outside the project directory; you must create test fixture files using Pytest.
 - Achieve thorough unit test coverage; add integration tests to validate interactions between components.
 
 ## Project Structure
