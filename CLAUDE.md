@@ -1,0 +1,2 @@
+- Your code must be clean and direct--use best practices for readable code.
+- Use comments that label what something does, and why it's needed. 
