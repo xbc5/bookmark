@@ -1,35 +1,42 @@
 ## Meta
 
-- The project is called **bookmark**.
-- After installation, the script should be executable from any location.
-- I want to be able to run the script simply by typing `bookmark` in the terminal.
+- The project is named **bookmark**.
+- After installation, the script must be executable from any directory.
+- The script should be runnable by typing `bookmark` in the terminal.
 
 ## Code Style
 
-- Write clean, direct code following best practices for readability.
-- Use clear comments to indicate what each section of code does and why it's necessary.
-- Include type hints throughout the codebase.
+- Write clean, readable code that follows best practices.
+- Add clear comments to describe what each section does and why it exists.
+- Use type hints throughout the code.
 - Format all code with **Black**.
-- Use **Ruff** for linting.
+- Lint the code using **Ruff**.
+
+## Documentation
+
+- Write clear and concise documentation for every function and class.
+- Use docstrings to explain the purpose, parameters, and return values of functions.
+- Use a first-person, imperative tone in documentation.
+- Clearly state the purpose and behavior for each function and class.
 
 ## Dependencies
 
-- Use **UV** for dependency management.
-- You can install and use any dependency that you wish.
-- Use dependencies if it reduces code duplication or improves readability.
-- Do not use different versions of the same dependency.
-- Do not use different dependencies to achieve the same goal.
+- Manage dependencies with **UV**.
+- Install and use any dependencies as needed.
+- Use dependencies to reduce code duplication and improve readability.
+- Avoid using multiple versions of the same dependency.
+- Do not use different dependencies to serve the same purpose.
 
 ## Testing
 
-- Write code that is easy to test.
-- Use **pytest** for testing.
-- Where possible, test against real files instead of using mocks, utilizing pytest’s built-in fixtures.
-- Ensure comprehensive unit test coverage; implement enough integration tests to ensure components work together correctly.
+- Write code that is straightforward to test.
+- Use **pytest** for all testing.
+- Prefer testing with real files using pytest's fixtures over mocks when possible.
+- Achieve thorough unit test coverage; add integration tests to validate interactions between components.
 
 ## Project Structure
 
-- Organize code into packages, using `__init__.py` files to provide the public interface.
+- Structure the code into packages, using `__init__.py` files to define the public interface.
 
 Example structure:
 
