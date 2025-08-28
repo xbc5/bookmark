@@ -2,73 +2,78 @@
 
 ## Overview
 
-This project is a Python script that manages bookmarks by reading files located in `~/.bookmarks/foo.txt` and launching the selected bookmark in a preferred browser. The script is installable, and upon installation, it ensures the `~/.bookmarks` directory exists, creating it if necessary.
+This Python script manages bookmarks using simple, plain-text files. Bookmarks are created, stored, and launched via the command line interface, with tag-based autocompletion and FZF search.
 
-## Bookmark Creation and Storage
+## Installation and Directory Structure
 
-- Users can create bookmark files within the `~/.bookmarks` directory using a command line option.
-- The script allows users to create a bookmark file (e.g., `~/.bookmarks/foo.txt`) if it does not already exist.
-- Each bookmark is stored as one line in the file, using the following pipe-delimited format:  
+- On installation or use, the script ensures that the `~/.bookmarks` directory exists.
+- Bookmark files are stored as plain-text files (e.g., `~/.bookmarks/foo.txt`).
+- Tags available for autocompletion are tracked in `~/.bookmarks/tags.txt`, sorted alphabetically.
+
+## Bookmark File Format
+
+- Each bookmark is a single line in the file.
+- Format:  
   ```
   name|url|description|tags
   ```
+- Fields:
+    - **name**: Must not contain vertical bars (`|`). Input is reprompted until valid; the script enforces title case on names.
+    - **url**: Any text is allowed.
+    - **description**: Optional; if empty, leave the field empty.
+    - **tags**: Comma-separated, lower-case. Optional; field remains empty if no tags provided. No duplicate tags or extra whitespace.
+- Example (with descriptors filled):  
+  ```
+  My Example Bookmark|https://www.example.com|This is a test bookmark.|testing,example
+  ```
+  Example (with description and tags empty):  
+  ```
+  My Second Bookmark|https://another.com||
+  ```
+- The final pipe (`|`) delimiter **is always present** even if description or tags are empty.
+- **Blank lines are ignored.**
+- **No comments are allowed.**
+- **Duplicate bookmarks are permitted.**
 
-#### Example
+## Invariants Enforcement
 
-```
-Example\| An example website|https://www.example.com|This website is an example that I often use for testing.|foo,bar,baz|
-```
+- All specified invariants (field count, no vertical bars in name, non-duplicate trimmed tags in lower-case, name title case) are enforced automatically and silently corrected during input.
+- If a bookmark entry is malformed (too many/little fields), this reflects a programmer error and should not occur.
 
-### Bookmark File Format Invariants
+## Tags Autocompletion
 
-- **Tags** are comma-separated.
-- **Description**:
-  - Begins with a capital letter.
-  - Ends with a period.
-- **Name**:
-  - Prefixed by a category: `"Category \| An example website"`.
-  - Uses title case for both category and following text.
-  - Never ends in a period.
-  - Vertical bars in the name are escaped with a backslash (`\|`).
-
-The program should not crash upon invariant violation. Instead, it should automatically correct the issues.
-
-## Category and Tag Management
-
-### Category Tracking
-
-- Categories are tracked in a separate file: `~/.bookmarks/categories.txt`.
-- When creating a new bookmark, the script uses the category as a prefix for the bookmark’s name.
-- If the category file does not exist, it will be created.
-- Categories are ordered alphabetically.
-
-### Tag Tracking
-
-- Tags are tracked in `~/.bookmarks/tags.txt`, with one tag per line.
-- If the tag file does not exist, it will be created.
-- Tags are ordered alphabetically.
+- Tags from `~/.bookmarks/tags.txt` are used only for autocompletion; they do not control what tags actually exist in bookmarks. If a tag is used in a bookmark but not in the tags file, autocompletion is unaffected.
+- When a user enters a new tag, it is added to the file in lower-case, sorted order with no duplicates.
 
 ## Bookmark Creation Workflow
 
-When creating a new bookmark, the following steps occur:
+1. Ensure the target bookmark file exists (using a command line flag for the file; otherwise, fallback to a config file or use a default name).
+2. Prompt the user for the bookmark's name (reprompt until valid, then apply title case).
+3. Prompt for the URL (accept any text).
+4. Prompt for an optional description (empty allowed).
+5. Prompt for optional tags (FZF-based autocompletion, lower-case, comma-separated, no duplicates).
+6. Enforce all invariants, correcting them silently.
+7. Append the bookmark entry to the specified file.
 
-1. Create the category file if it does not exist.
-2. Create the bookmark file (`~/.bookmarks/foo.txt`) if it does not exist.
-3. Prompt the user for the bookmark's URL.
-4. Prompt the user for a category (using FZF for fuzzy selection).
-   - If the entered category does not exist, it is added and used.
-5. Prompt the user for the bookmark name.
-6. Prompt for an optional description (Return skips this step).
-7. Prompt for optional tags (Return skips this step, tags selected via fuzzy search from the tag file).
+## Bookmark Launch Workflow
 
-## Bookmark Selection and Launch
-
-- The script uses FZF (fuzzy finder) to allow rapid bookmark selection from the bookmark file.
-- The selection interface is flat and non-hierarchical; users search directly within the entire bookmark file.
-- Upon selection, the script launches the bookmark in the user's default browser, or uses a specified command pattern (e.g., `browsername [options] %s`).
+1. Use FZF to present all bookmarks in the chosen file.
+2. Display fields according to a list specified in `~/.bookmarks/config.yaml` (`name`, `description`, `url` by default) using a pipe (`|`) separator.
+3. Upon choosing a bookmark, open it in the user’s default browser or, if a browser command is specified via CLI or config file, use that.
+   - The CLI option takes precedence over config.
+   - If neither is specified, the system default browser is used.
 
 ## Command Line Interface
 
-- The script provides a clean, user-friendly CLI for both creating and launching bookmarks.
-- All prompts (category, name, description, tags) utilize FZF for fuzzy searching over existing entries, facilitating fast and efficient input.
+- Provides subcommands for creating and launching bookmarks, and for specifying which bookmarks file to use.
+- All prompts provide FZF-based autocompletion where appropriate.
+- No CLI support for editing or deleting bookmarks or tags; these are managed by manual file edits.
 
+## Files Behavior
+
+- All files are plain-text.
+- Files (`tags.txt`, bookmarks files) are created if not present.
+- Blank lines in bookmarks files are ignored.
+- Every non-empty line in a bookmarks file is a bookmark entry.
+- No support for comments, encryption, export/import, or categories.
+- On file read/write errors, print an error message to stderr and exit.
