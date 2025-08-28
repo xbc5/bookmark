@@ -1,5 +1,5 @@
 def main():
-    print("Hello from bookmarks!")
+    print("Hello from bookmark!")
 
 
 if __name__ == "__main__":
